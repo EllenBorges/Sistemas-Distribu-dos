@@ -1,0 +1,66 @@
+
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <dlfcn.h>
+
+typedef struct Lista {   
+  char *dado;   
+  struct Lista *anterior;   
+  struct Lista *proximo;  
+  int tamanho; 
+}elemento;   
+
+/*----------------- Funcoes para a Lista encadeada-----------------*/
+
+void InicializaLista(){
+}
+
+void InsereLista(){
+}
+
+void RemoveLista(){
+}
+
+void Libera(){
+}
+
+
+/*----------------- Funcoes para a Lista encadeada-----------------*/
+
+
+void *(*_malloc)(size_t) = NULL;
+
+void *malloc(size_t size){
+
+	if (!_malloc)
+		_malloc = dlsym(RTLD_NEXT, "malloc");
+	
+	fprintf(stderr, "WRAPPER: malloc(%d) = %p\n",(int)size, p);
+	void *p = _malloc(size);
+
+	//INSERE P NUMA LISTA duplamente encadeada
+	return p;
+}
+
+void *calloc(size_t size){
+
+	
+}
+void *realloc(size_t size){
+
+	
+}
+
+
+void free(void *ptr){
+	if(_free ==NULL){
+		_free = dlsym (RTLD_NEXT,"free");
+	//buscar na lista se existir chamar free original retirando p da lista
+	
+}
+
+
+
+
+
