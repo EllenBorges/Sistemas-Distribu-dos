@@ -43,15 +43,37 @@ void *malloc(size_t size){
 	return p;
 }
 
-void *calloc(size_t size){
+void * (*_calloc)(size_t, size_t) = NULL;
+
+void *calloc(size_t nmemb, size_t size){
+	if (!_calloc)
+		_calloc = dlsym(RTLD_NEXT, "calloc");
+	
+	fprintf(stderr, "WRAPPER: mclloc(%d) = %p\n",(int)size, p);
+	void *p = _calloc(nmemb, size);
+
+	//INSERE P NUMA LISTA duplamente encadeada
+	return p;
+	
+}
+
+
+void * (*_realloc)(void *, size_t) = NULL;
+
+void *realloc(void *ptr, size_t size){
+	if (!_realloc)
+		_realloc = dlsym(RTLD_NEXT, "realloc");
+	
+	fprintf(stderr, "WRAPPER: realloc(%d) = %p\n",(int)size, p);
+	void *p = _realloc(ptr, size);
+
+	//INSERE P NUMA LISTA duplamente encadeada
+	return p;
 
 	
 }
-void *realloc(size_t size){
 
-	
-}
-
+void (*_free)(void *) = NULL;
 
 void free(void *ptr){
 	if(_free ==NULL){
