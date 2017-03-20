@@ -1,7 +1,7 @@
-/*
+//*
 Pratica 1: Implementacao de um Middleware tolerante a falha para alocacao dinamica de memoria
 Alunos: Ellen Priscila Borges Oliveira RA 69554
-        Juliana de Paula Nader
+        Juliana de Paula Nader RA 86301
 */
 
 #define _GNU_SOURCE
@@ -11,7 +11,8 @@ Alunos: Ellen Priscila Borges Oliveira RA 69554
 
 
 typedef struct no_lista{
-  int dado;
+  void * p_fun;
+  size_t size;
   struct no_lista *ant; /* quarda a posicao do elemento anterior na lista */
   struct no_lista *prox; /* quarda a posicao do proximo elemento na lista */
 }NO;
@@ -25,30 +26,27 @@ typedef struct Lista{
 /*----------------- Funcoes para a Lista encadeada-----------------*/
 
 void InicializaLista(LDE *L){
-
   L->primeiro = NULL;
   L->ultimo = NULL;
   L->tamanho = 0;
 
 }
 
-NO* Busca(LDE *L, int dado){
+NO* Busca(LDE *L, void * p_fun){
 
     NO *temp;
-
     for (temp = L->primeiro; temp!=NULL;temp = temp->prox) {
-        if (temp->dado == dado) {
+        if (temp->p_fun == p_fun) {
           return temp;
         }
     }
     return NULL; /* não achou o no */
-
-
 }
 
-NO* CriaNovoNo(int dado){
+NO* CriaNovoNo(void * p_fun, size_t size){
     NO *novo = malloc(sizeof(NO));
-    novo->dado = dado;
+    novo->p_fun = p_fun;
+    novo->size = size;
     novo->ant = NULL;
     novo->prox = NULL;
     return novo;
@@ -56,8 +54,8 @@ NO* CriaNovoNo(int dado){
 
 
 //insere um novo no no final da lista
-int InsereNO(LDE *L, int dado){ //void(*dado)() ){
-    NO*novo = CriaNovoNo(dado);
+int InsereNO(LDE *L, void * p_fun, size_t size){ //void(*dado)() ){
+    NO*novo = CriaNovoNo(p_fun,size);
     if(novo==NULL)
         return -1;
     //se a lista esta vazia
@@ -69,7 +67,7 @@ int InsereNO(LDE *L, int dado){ //void(*dado)() ){
     }
     //caso a lista possua um ou mais elementos
     else{
-        if(Busca(L,dado)==NULL){
+        if(Busca(L,p_fun)==NULL){
             novo->prox = NULL;
             novo->ant= L->ultimo;
             L->ultimo->prox = novo;
@@ -80,10 +78,10 @@ int InsereNO(LDE *L, int dado){ //void(*dado)() ){
     }
 }
 
-int RemoveNO(LDE *L, int dado){
+int RemoveNO(LDE *L, void * p_fun){
     if(L->tamanho==0) //se a lista esta vazia
         return -1;
-    NO* temp = Busca(L,dado);
+    NO* temp = Busca(L,p_fun);
     if(temp!=NULL){
         //remove começo
         if(temp->ant==NULL){
@@ -120,6 +118,7 @@ void DestroiLista(LDE* L){
         free(no);
         no = temp;
     }
+    free(L);
 }
 void ImprimeLista (LDE *L) {
     if(L!=NULL){
@@ -130,7 +129,8 @@ void ImprimeLista (LDE *L) {
 void Imprime(NO* temp){
 
     if(temp!=NULL){
-        printf("Valor = [%d]\n", temp->dado);
+        printf("Endereco = [%p]\n", temp->p_fun);
+        printf("Tamanho = [%d]\n", temp->size);
         Imprime(temp->prox);
     }
 }
@@ -196,18 +196,16 @@ void free(void *ptr){
 }
 */
 
+
 int main(){
     LDE *lista  = malloc(sizeof(LDE));
     InicializaLista(lista);
-    InsereNO(lista,7);
-    InsereNO(lista,2);
-    InsereNO(lista,3);
-    InsereNO(lista,5);
-    InsereNO(lista,5);
-    InsereNO(lista,6);
-    InsereNO(lista,7);
+    InsereNO(lista,7,10);
+    InsereNO(lista,2,1);
+    InsereNO(lista,5,10254);
+
     ImprimeLista(lista);
-    RemoveNO(lista,6);
+    RemoveNO(lista,2);
     printf("remove\n");
     ImprimeLista(lista);
 
