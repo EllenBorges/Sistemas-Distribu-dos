@@ -1,44 +1,91 @@
+/*
+Pratica 1: Implementacao de um Middleware tolerante a falha para alocacao dinamica de memoria
+Alunos: Ellen Priscila Borges Oliveira RA 69554
+        Juliana de Paula Nader
+*/
 
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <dlfcn.h>
 
-typedef struct Lista {   
-  void *dado;   
-  struct Lista *anterior;   
-  struct Lista *proximo;  
-  int tamanho; 
-}elemento;   
+
+typedef struct no_lista{
+  int dado;
+  struct no_lista *ant; /* quarda a posicao do elemento anterior na lista */
+  struct no_lista *prox; /* quarda a posicao do proximo elemento na lista */
+}NO;
+
+typedef struct Lista{
+    NO* primeiro;
+    NO* ultimo;
+    int tamanho;     /*guarda o tamanho da lista*/
+}LDE;
 
 /*----------------- Funcoes para a Lista encadeada-----------------*/
 
-void InicializaLista(){
+void InicializaLista(LDE *L){
+
+  L->primeiro = NULL;
+  L->ultimo = NULL;
+  L->tamanho = 0;
+
 }
 
 void *Busca(){
 
+
 }
 
-void InsereLista(){
+void InsereNO(LDE *L, int dado){ //void(*dado)() ){
+    NO *novo = malloc(sizeof(NO));
+    novo->dado = dado;
+    novo->ant = NULL;
+    novo->prox = NULL;
+
+    //se a lista esta vazia
+    if(L->primeiro==NULL && L->ultimo==NULL){
+        L->primeiro = novo;
+        L->ultimo = novo;
+        L->tamanho++;
+
+    }
+    //caso a lista possua um ou mais elementos
+    else{
+        novo->prox = NULL;
+        novo->ant= L->ultimo;
+        L->ultimo->prox = novo;
+        L->ultimo = novo;
+        L->tamanho++;
+
+    }
 }
 
-void RemoveLista(){
+void RemoveNO(){
 }
 
 void Libera(){
 }
 
-void Imprime elemento *A) {
-   if (A != NULL) {
-      printf ("%d\n", A->dado);
-      imprime (A->proximo);
-   }
+
+void ImprimeLista (LDE *L) {
+
+  NO *temp = malloc(sizeof(NO));
+  temp = L->primeiro;
+
+  while(temp->prox != NULL) {
+    printf("Valor = [%d].\n", temp->dado);
+    temp = temp->prox;
+  }
+
+  if(L->tamanho >= 1) {
+    printf("Valor = [%d] (ultimo).\n", temp->dado);
+    }
 }
 
 
 /*----------------- Funcoes para o mid-----------------*/
-
+/*
 
 void *(*_malloc)(size_t) = NULL;
 
@@ -46,7 +93,7 @@ void *malloc(size_t size){
 
 	if (!_malloc)
 		_malloc = dlsym(RTLD_NEXT, "malloc");
-	
+
 	fprintf(stderr, "WRAPPER: malloc(%d) = %p\n",(int)size, p);
 	void *p = _malloc(size);
 
@@ -59,13 +106,13 @@ void * (*_calloc)(size_t, size_t) = NULL;
 void *calloc(size_t nmemb, size_t size){
 	if (!_calloc)
 		_calloc = dlsym(RTLD_NEXT, "calloc");
-	
+
 	fprintf(stderr, "WRAPPER: mclloc(%d) = %p\n",(int)size, p);
 	void *p = _calloc(nmemb, size);
 
 	//INSERE P NUMA LISTA duplamente encadeada
 	return p;
-	
+
 }
 
 
@@ -74,14 +121,14 @@ void * (*_realloc)(void *, size_t) = NULL;
 void *realloc(void *ptr, size_t size){
 	if (!_realloc)
 		_realloc = dlsym(RTLD_NEXT, "realloc");
-	
+
 	fprintf(stderr, "WRAPPER: realloc(%d) = %p\n",(int)size, p);
 	void *p = _realloc(ptr, size);
 
 	//INSERE P NUMA LISTA duplamente encadeada
 	return p;
 
-	
+
 }
 
 
@@ -92,7 +139,23 @@ void free(void *ptr){
 	if(_free ==NULL){
 		_free = dlsym (RTLD_NEXT,"free");
 	//buscar na lista se existir chamar free original retirando p da lista
-	
+	//void *p = Busca(ptr);
+	//if(p!NULL) free(p);
+
+}
+*/
+
+int main(){
+    LDE *lista  = malloc(sizeof(LDE));
+    InicializaLista(lista);
+    InsereNO(lista,1);
+    InsereNO(lista,2);
+    InsereNO(lista,3);
+    ImprimeLista(lista);
+
+
+return 0;
+
 }
 
 
