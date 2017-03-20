@@ -130,7 +130,7 @@ void Imprime(NO* temp){
 
     if(temp!=NULL){
         printf("Endereco = [%p]\n", temp->p_fun);
-        printf("Tamanho = [%d]\n", temp->size);
+        printf("Tamanho = [%d]\n", (int)temp->size);
         Imprime(temp->prox);
     }
 }
@@ -147,11 +147,11 @@ void *malloc(size_t size){
 
     void *p = _malloc(size);
 	fprintf(stderr, "WRAPPER: malloc(%d) = %p\n",(int)size, p);
-	
+
 
 	InsereNO(lista,p,size);
-	
-	
+
+
 	return p;
 }
 
@@ -163,7 +163,7 @@ void *calloc(size_t nmemb, size_t size){
 
     void *p = _calloc(nmemb, size);
 	fprintf(stderr, "WRAPPER: calloc(%d) = %p\n",(int)size, p);
-	
+
 
 	InsereNO(lista,p,size);
 	return p;
@@ -176,10 +176,10 @@ void * (*_realloc)(void *, size_t) = NULL;
 void *realloc(void *ptr, size_t size){
 	if (!_realloc)
 		_realloc = dlsym(RTLD_NEXT, "realloc");
-		
+
     void *p = _realloc(ptr, size);
 	fprintf(stderr, "WRAPPER: realloc(%d) = %p\n",(int)size, p);
-	
+
 
 	InsereNO(lista,p,size);
 	return p;
@@ -194,7 +194,7 @@ void (*_free)(void *) = NULL;
 void free(void *ptr){
 	if(_free ==NULL){
 		_free = dlsym (RTLD_NEXT,"free");
-	
+
 	void *p = Busca(ptr);
 	if(p!NULL){
         RemoveNO(lista,p)
@@ -203,8 +203,6 @@ void free(void *ptr){
 
 }
 */
-
-
 int main(){
     LDE *lista  = malloc(sizeof(LDE));
     InicializaLista(lista);
@@ -216,7 +214,7 @@ int main(){
     RemoveNO(lista,2);
     printf("remove\n");
     ImprimeLista(lista);
-
+    free(lista);
 
 return 0;
 
