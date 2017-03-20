@@ -5,7 +5,7 @@
 #include <dlfcn.h>
 
 typedef struct Lista {   
-  char *dado;   
+  void *dado;   
   struct Lista *anterior;   
   struct Lista *proximo;  
   int tamanho; 
@@ -14,6 +14,10 @@ typedef struct Lista {
 /*----------------- Funcoes para a Lista encadeada-----------------*/
 
 void InicializaLista(){
+}
+
+void *Busca(){
+
 }
 
 void InsereLista(){
@@ -25,8 +29,15 @@ void RemoveLista(){
 void Libera(){
 }
 
+void Imprime elemento *A) {
+   if (A != NULL) {
+      printf ("%d\n", A->dado);
+      imprime (A->proximo);
+   }
+}
 
-/*----------------- Funcoes para a Lista encadeada-----------------*/
+
+/*----------------- Funcoes para o mid-----------------*/
 
 
 void *(*_malloc)(size_t) = NULL;
@@ -72,6 +83,8 @@ void *realloc(void *ptr, size_t size){
 
 	
 }
+
+
 
 void (*_free)(void *) = NULL;
 
