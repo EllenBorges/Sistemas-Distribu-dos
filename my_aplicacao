@@ -120,11 +120,7 @@ void DestroiLista(LDE* L){
     }
     free(L);
 }
-void ImprimeLista (LDE *L) {
-    if(L!=NULL){
-        Imprime(L->primeiro);
-    }
-}
+
 
 void Imprime(NO* temp){
 
@@ -135,8 +131,13 @@ void Imprime(NO* temp){
     }
 }
 
+void ImprimeLista (LDE *L) {
+    if(L!=NULL){
+        Imprime(L->primeiro);
+    }
+}
 /*----------------- Funcoes para o mid-----------------*/
-/*
+
 
 void *(*_malloc)(size_t) = NULL;
 
@@ -149,12 +150,12 @@ void *malloc(size_t size){
 	fprintf(stderr, "WRAPPER: malloc(%d) = %p\n",(int)size, p);
 
 
-	InsereNO(lista,p,size);
+	//InsereNO(lista,p,size);
 
 
 	return p;
 }
-
+/*
 void * (*_calloc)(size_t, size_t) = NULL;
 
 void *calloc(size_t nmemb, size_t size){
@@ -203,24 +204,14 @@ void free(void *ptr){
 
 }
 */
+/*
 int main(){
     LDE *lista  = malloc(sizeof(LDE));
-    InicializaLista(lista);
-    InsereNO(lista,7,10);
-    InsereNO(lista,2,1);
-    InsereNO(lista,5,10254);
 
-    ImprimeLista(lista);
-    RemoveNO(lista,2);
-    printf("remove\n");
-    ImprimeLista(lista);
+    InicializaLista(lista);
+
     free(lista);
 
 return 0;
 
-}
-
-
-
-
-
+}*/
