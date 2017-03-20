@@ -32,57 +32,108 @@ void InicializaLista(LDE *L){
 
 }
 
-void *Busca(){
+NO* Busca(LDE *L, int dado){
+
+    NO *temp;
+
+    for (temp = L->primeiro; temp!=NULL;temp = temp->prox) {
+        if (temp->dado == dado) {
+          return temp;
+        }
+    }
+    return NULL; /* não achou o no */
 
 
 }
 
-void InsereNO(LDE *L, int dado){ //void(*dado)() ){
+NO* CriaNovoNo(int dado){
     NO *novo = malloc(sizeof(NO));
     novo->dado = dado;
     novo->ant = NULL;
     novo->prox = NULL;
+    return novo;
+}
 
+
+//insere um novo no no final da lista
+int InsereNO(LDE *L, int dado){ //void(*dado)() ){
+    NO*novo = CriaNovoNo(dado);
+    if(novo==NULL)
+        return -1;
     //se a lista esta vazia
     if(L->primeiro==NULL && L->ultimo==NULL){
         L->primeiro = novo;
         L->ultimo = novo;
         L->tamanho++;
-
+        return 0;
     }
     //caso a lista possua um ou mais elementos
     else{
-        novo->prox = NULL;
-        novo->ant= L->ultimo;
-        L->ultimo->prox = novo;
-        L->ultimo = novo;
-        L->tamanho++;
-
+        if(Busca(L,dado)==NULL){
+            novo->prox = NULL;
+            novo->ant= L->ultimo;
+            L->ultimo->prox = novo;
+            L->ultimo = novo;
+            L->tamanho++;
+            return 0;
+        }else return -1;
     }
 }
 
-void RemoveNO(){
+int RemoveNO(LDE *L, int dado){
+    if(L->tamanho==0) //se a lista esta vazia
+        return -1;
+    NO* temp = Busca(L,dado);
+    if(temp!=NULL){
+        //remove começo
+        if(temp->ant==NULL){
+            L->primeiro = temp->prox;
+            L->primeiro->ant = NULL;
+
+        }//remove final
+        else if(temp->prox==NULL){
+            L->ultimo= temp->ant;
+            temp->ant->prox=NULL;
+            L->tamanho--;
+
+        }//no meio
+        else {
+            temp->ant->prox = temp->prox;
+            temp->prox->ant = temp->ant;
+
+        }
+        L->tamanho--;
+        temp->prox = NULL;
+        temp->ant= NULL;
+        free(temp);
+        return 0;
+    }else return -1;
+
 }
 
-void Libera(){
+void DestroiLista(LDE* L){
+    NO* no = L->primeiro;
+    NO* temp;
+
+    while (no != NULL) {
+        temp = no->prox;
+        free(no);
+        no = temp;
+    }
 }
-
-
 void ImprimeLista (LDE *L) {
-
-  NO *temp = malloc(sizeof(NO));
-  temp = L->primeiro;
-
-  while(temp->prox != NULL) {
-    printf("Valor = [%d].\n", temp->dado);
-    temp = temp->prox;
-  }
-
-  if(L->tamanho >= 1) {
-    printf("Valor = [%d] (ultimo).\n", temp->dado);
+    if(L!=NULL){
+        Imprime(L->primeiro);
     }
 }
 
+void Imprime(NO* temp){
+
+    if(temp!=NULL){
+        printf("Valor = [%d]\n", temp->dado);
+        Imprime(temp->prox);
+    }
+}
 
 /*----------------- Funcoes para o mid-----------------*/
 /*
@@ -148,9 +199,16 @@ void free(void *ptr){
 int main(){
     LDE *lista  = malloc(sizeof(LDE));
     InicializaLista(lista);
-    InsereNO(lista,1);
+    InsereNO(lista,7);
     InsereNO(lista,2);
     InsereNO(lista,3);
+    InsereNO(lista,5);
+    InsereNO(lista,5);
+    InsereNO(lista,6);
+    InsereNO(lista,7);
+    ImprimeLista(lista);
+    RemoveNO(lista,6);
+    printf("remove\n");
     ImprimeLista(lista);
 
 
