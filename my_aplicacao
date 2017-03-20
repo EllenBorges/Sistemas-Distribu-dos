@@ -145,10 +145,13 @@ void *malloc(size_t size){
 	if (!_malloc)
 		_malloc = dlsym(RTLD_NEXT, "malloc");
 
+    void *p = _malloc(size);
 	fprintf(stderr, "WRAPPER: malloc(%d) = %p\n",(int)size, p);
-	void *p = _malloc(size);
+	
 
-	//INSERE P NUMA LISTA duplamente encadeada
+	InsereNO(lista,p,size);
+	
+	
 	return p;
 }
 
@@ -158,10 +161,11 @@ void *calloc(size_t nmemb, size_t size){
 	if (!_calloc)
 		_calloc = dlsym(RTLD_NEXT, "calloc");
 
-	fprintf(stderr, "WRAPPER: mclloc(%d) = %p\n",(int)size, p);
-	void *p = _calloc(nmemb, size);
+    void *p = _calloc(nmemb, size);
+	fprintf(stderr, "WRAPPER: calloc(%d) = %p\n",(int)size, p);
+	
 
-	//INSERE P NUMA LISTA duplamente encadeada
+	InsereNO(lista,p,size);
 	return p;
 
 }
@@ -172,11 +176,12 @@ void * (*_realloc)(void *, size_t) = NULL;
 void *realloc(void *ptr, size_t size){
 	if (!_realloc)
 		_realloc = dlsym(RTLD_NEXT, "realloc");
-
+		
+    void *p = _realloc(ptr, size);
 	fprintf(stderr, "WRAPPER: realloc(%d) = %p\n",(int)size, p);
-	void *p = _realloc(ptr, size);
+	
 
-	//INSERE P NUMA LISTA duplamente encadeada
+	InsereNO(lista,p,size);
 	return p;
 
 
@@ -189,9 +194,12 @@ void (*_free)(void *) = NULL;
 void free(void *ptr){
 	if(_free ==NULL){
 		_free = dlsym (RTLD_NEXT,"free");
-	//buscar na lista se existir chamar free original retirando p da lista
-	//void *p = Busca(ptr);
-	//if(p!NULL) free(p);
+	
+	void *p = Busca(ptr);
+	if(p!NULL){
+        RemoveNO(lista,p)
+        _free(p);
+	}
 
 }
 */
