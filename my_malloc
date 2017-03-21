@@ -27,7 +27,7 @@ typedef struct Lista{
 LDE *lista;
 
 LDE* InicializaLista(){
-  LDE *L  = malloc(sizeof(LDE));
+  LDE *L  = (LDE*) malloc(sizeof(LDE));
   L->primeiro = NULL;
   L->ultimo = NULL;
   L->tamanho = 0;
@@ -51,7 +51,7 @@ NO* Busca(LDE *L, void * p_fun){
 
 //insere um novo no no final da lista
 void InsereNO(LDE *L, void * p_fun, size_t size){
-    NO *novo = malloc(sizeof(NO));
+    NO *novo = (NO*) malloc(sizeof(NO));
     novo->p_fun = p_fun;
     novo->size = size;
     novo->ant = NULL;
@@ -80,7 +80,7 @@ void InsereNO(LDE *L, void * p_fun, size_t size){
 }
 
 void RemoveNO(LDE *L, void * p_fun){
-    if(L->tamanho>0){ //se a lista esta vazia
+    if(L->tamanho>0){ //se a lista nao esta vazia
 
 	    NO* temp = Busca(L,p_fun);
 	    if(temp!=NULL){
@@ -148,13 +148,9 @@ void *malloc(size_t size){
 	if (!_malloc)
 		_malloc = dlsym(RTLD_NEXT, "malloc");
 
-    void *p = _malloc(size);
+  	void *p = _malloc(size);
 	fprintf(stderr, "WRAPPER: malloc(%d) = %p\n",(int)size, p);
-
-
 	InsereNO(lista,p,size);
-
-
 	return p;
 }
 
@@ -164,10 +160,8 @@ void *calloc(size_t nmemb, size_t size){
 	if (!_calloc)
 		_calloc = dlsym(RTLD_NEXT, "calloc");
 
-    void *p = _calloc(nmemb, size);
+   	void *p = _calloc(nmemb, size);
 	fprintf(stderr, "WRAPPER: calloc(%d) = %p\n",(int)size, p);
-
-
 	InsereNO(lista,p,size);
 	return p;
 
@@ -179,18 +173,11 @@ void * (*_realloc)(void *, size_t) = NULL;
 void *realloc(void *ptr, size_t size){
 	if (!_realloc)
 		_realloc = dlsym(RTLD_NEXT, "realloc");
-
-    void *p = _realloc(ptr, size);
+	void *p = _realloc(ptr, size);
 	fprintf(stderr, "WRAPPER: realloc(%d) = %p\n",(int)size, p);
-
-
 	InsereNO(lista,p,size);
 	return p;
-
-
 }
-
-
 
 void (*_free)(void *) = NULL;
 
