@@ -6,6 +6,8 @@
 int main(void){
 	char *str = (char *)malloc(100);
 	strcpy(str, "dentro da main ...");
-	//printf("\n%s", str);
+	printf("\n%s", str);
+	free(str);
 	return 0;
 }
+
