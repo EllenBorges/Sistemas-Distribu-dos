@@ -24,13 +24,18 @@ typedef struct Lista{
 }LDE;
 
 /*----------------- Funcoes para a Lista encadeada-----------------*/
+LDE *lista;
 
-void InicializaLista(LDE *L){
+LDE* InicializaLista(){
+  LDE *L  = malloc(sizeof(LDE));
   L->primeiro = NULL;
   L->ultimo = NULL;
   L->tamanho = 0;
+  return L;
 
 }
+
+
 
 NO* Busca(LDE *L, void * p_fun){
 
@@ -43,69 +48,66 @@ NO* Busca(LDE *L, void * p_fun){
     return NULL; /* não achou o no */
 }
 
-NO* CriaNovoNo(void * p_fun, size_t size){
+
+//insere um novo no no final da lista
+void InsereNO(LDE *L, void * p_fun, size_t size){
     NO *novo = malloc(sizeof(NO));
     novo->p_fun = p_fun;
     novo->size = size;
     novo->ant = NULL;
     novo->prox = NULL;
-    return novo;
+    if(novo!=NULL){
+
+	    //se a lista esta vazia
+	    if(L->primeiro==NULL && L->ultimo==NULL){
+		L->primeiro = novo;
+		L->ultimo = novo;
+		L->tamanho++;
+
+	    }
+	    //caso a lista possua um ou mais elementos
+	    else{
+		if(Busca(L,p_fun)==NULL){
+		    novo->prox = NULL;
+		    novo->ant= L->ultimo;
+		    L->ultimo->prox = novo;
+		    L->ultimo = novo;
+		    L->tamanho++;
+
+		}
+    	     }
+     }
 }
 
+void RemoveNO(LDE *L, void * p_fun){
+    if(L->tamanho>0){ //se a lista esta vazia
 
-//insere um novo no no final da lista
-int InsereNO(LDE *L, void * p_fun, size_t size){ //void(*dado)() ){
-    NO*novo = CriaNovoNo(p_fun,size);
-    if(novo==NULL)
-        return -1;
-    //se a lista esta vazia
-    if(L->primeiro==NULL && L->ultimo==NULL){
-        L->primeiro = novo;
-        L->ultimo = novo;
-        L->tamanho++;
-        return 0;
-    }
-    //caso a lista possua um ou mais elementos
-    else{
-        if(Busca(L,p_fun)==NULL){
-            novo->prox = NULL;
-            novo->ant= L->ultimo;
-            L->ultimo->prox = novo;
-            L->ultimo = novo;
-            L->tamanho++;
-            return 0;
-        }else return -1;
-    }
-}
+	    NO* temp = Busca(L,p_fun);
+	    if(temp!=NULL){
+		//remove começo
+		if(temp->ant==NULL){
+		    L->primeiro = temp->prox;
+		    L->primeiro->ant = NULL;
 
-int RemoveNO(LDE *L, void * p_fun){
-    if(L->tamanho==0) //se a lista esta vazia
-        return -1;
-    NO* temp = Busca(L,p_fun);
-    if(temp!=NULL){
-        //remove começo
-        if(temp->ant==NULL){
-            L->primeiro = temp->prox;
-            L->primeiro->ant = NULL;
+		}//remove final
+		else if(temp->prox==NULL){
+		    L->ultimo= temp->ant;
+		    temp->ant->prox=NULL;
+		    L->tamanho--;
 
-        }//remove final
-        else if(temp->prox==NULL){
-            L->ultimo= temp->ant;
-            temp->ant->prox=NULL;
-            L->tamanho--;
+		}//no meio
+		else {
+		    temp->ant->prox = temp->prox;
+		    temp->prox->ant = temp->ant;
 
-        }//no meio
-        else {
-            temp->ant->prox = temp->prox;
-            temp->prox->ant = temp->ant;
+		}
+		L->tamanho--;
+		temp->prox = NULL;
+		temp->ant= NULL;
+		free(temp);
 
-        }
-        L->tamanho--;
-        temp->prox = NULL;
-        temp->ant= NULL;
-        free(temp);
-        return 0;
-    }else return -1;
+	   }
+     }
 
 }
 
@@ -150,12 +152,12 @@ void *malloc(size_t size){
 	fprintf(stderr, "WRAPPER: malloc(%d) = %p\n",(int)size, p);
 
 
-	//InsereNO(lista,p,size);
+	InsereNO(lista,p,size);
 
 
 	return p;
 }
-/*
+
 void * (*_calloc)(size_t, size_t) = NULL;
 
 void *calloc(size_t nmemb, size_t size){
@@ -193,25 +195,20 @@ void *realloc(void *ptr, size_t size){
 void (*_free)(void *) = NULL;
 
 void free(void *ptr){
-	if(_free ==NULL){
-		_free = dlsym (RTLD_NEXT,"free");
+	if(lista!=NULL && lista->tamanho>0){
+		if(!_free){
+			_free = dlsym (RTLD_NEXT,"free");
+			 RemoveNO(lista,ptr);
 
-	void *p = Busca(ptr);
-	if(p!NULL){
-        RemoveNO(lista,p)
-        _free(p);
-	}
-
+        }
+    }
 }
-*/
-/*
+
+
+
 int main(){
-    LDE *lista  = malloc(sizeof(LDE));
-
-    InicializaLista(lista);
-
-    free(lista);
+    lista = InicializaLista();
 
 return 0;
 
-}*/
+}
